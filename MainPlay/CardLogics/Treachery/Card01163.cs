@@ -1,0 +1,32 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Card01163 : CardTreachery
+{
+    SkillTest skillTest;
+
+    /*****************************************************************************************/
+    public override IEnumerator Revelation()
+    {
+        skillTest = new SkillTest
+        {
+            Title = "Soportando " + ThisCard.Info.Name,
+            SkillType = Skill.Willpower,
+            CardToTest = ThisCard,
+            TestValue = 3
+        };
+        skillTest.LoseEffect.Add(new CardEffect(
+            card: ThisCard,
+            effect: LoseEffect,
+            type: EffectType.Choose,
+            name: "Recibir horror"));
+        yield return new SkillTestAction(skillTest).RunNow();
+    }
+
+    IEnumerator LoseEffect()
+    {
+        int horror = skillTest.TotalTestValue - skillTest.TotalInvestigatorValue;
+        yield return new AssignDamageHorror(GameControl.ActiveInvestigator, horrorAmount: horror).RunNow();
+    }
+}
